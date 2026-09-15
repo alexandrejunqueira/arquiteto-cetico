@@ -1,0 +1,179 @@
+{
+  "skill_name": "arquiteto-cetico",
+  "version": "2.1",
+  "note": "Expectativas são semânticas, avaliadas por um juiz (LLM ou humano) lendo a resposta completa. Substituem o substring matching da v1.0, que punia respostas corretas (ex.: proibia a string 'Clean Architecture' mesmo quando a resposta a mencionava para descartá-la). Distinguir sempre MENCIONAR de RECOMENDAR. v2.1: chave renomeada de 'assertions' para 'expectations' (schema do skill-creator), eval 1 sem expectativa contrafactual, eval 10 brownfield com fixture de código em evals/files/brownfield-users.",
+  "evals": [
+    {
+      "id": 0,
+      "name": "greenfield-mvp-time-pequeno",
+      "prompt": "Preciso desenhar a arquitetura de um SaaS B2B de gestão de inventário. Somos 3 devs usando Next.js e Node.js. Queremos lançar em 3 meses.",
+      "expected_output": "Recomendação de monolito com estrutura flat por feature, justificada pelas restrições (3 devs, 3 meses), com gatilhos de evolução documentados.",
+      "files": [],
+      "expectations": [
+        "Recomenda um monolito (unidade única de deploy) como arquitetura inicial",
+        "Não recomenda adotar microserviços, Clean Architecture ou Hexagonal como estrutura inicial (mencioná-los para descartá-los é permitido e positivo)",
+        "Propõe estrutura de pastas organizada por feature autocontida, não por camadas técnicas (entities/, use-cases/, adapters/)",
+        "Usa as restrições declaradas (3 devs, 3 meses) explicitamente na justificativa",
+        "Documenta gatilhos de evolução (condições sob as quais reconsiderar a estrutura)",
+        "A parte estratégica (vocabulário, contextos) é proporcional ao MVP: um parágrafo ou lista curta, não um Context Map elaborado para um contexto só"
+      ]
+    },
+    {
+      "id": 1,
+      "name": "pedido-explicito-clean-arch",
+      "prompt": "Preciso implementar Clean Architecture no meu projeto de e-commerce com Node.js.",
+      "expected_output": "Questiona o contexto antes de aceitar o padrão; pede/infere restrições; oferece alternativa mais simples; não concorda por educação; não bloqueia a ajuda.",
+      "files": [],
+      "expectations": [
+        "Não entrega uma implementação de Clean Architecture imediatamente; questiona ou coleta contexto antes",
+        "Pergunta ou infere restrições concretas (tamanho do time, tráfego, timeline, quem escreve o código)",
+        "Apresenta uma alternativa mais simples que Clean Architecture completa",
+        "Não abre com concordância sicofântica (ex.: 'ótima escolha', 'excelente padrão')",
+        "Não condiciona a ajuda a o usuário abandonar Clean Architecture: deixa claro que, com contexto que justifique, ajuda a implementar — o tom é de questionamento, não de recusa ou condescendência"
+      ]
+    },
+    {
+      "id": 2,
+      "name": "repository-sobre-orm-pair-review",
+      "prompt": "Revisão: temos IUserRepository, UserRepositoryImpl e usamos Prisma por baixo. Não há testes que mockam a interface. Faz sentido manter?",
+      "expected_output": "Resposta curta (modo pair-review): remover a interface, usar Prisma encapsulado no pacote do contexto; justifica por implementação única sem mock em uso.",
+      "files": [],
+      "expectations": [
+        "Recomenda remover a interface IUserRepository (ou equivalente claro de que a camada não se justifica)",
+        "Justifica citando implementação única e/ou ausência de teste que realmente mocka",
+        "Propõe alternativa concreta: usar o Prisma diretamente, encapsulado no pacote/módulo do contexto",
+        "Resposta enxuta no espírito pair-review — não infla para relatório completo com Context Map, ADR ou discussão de microserviços"
+      ]
+    },
+    {
+      "id": 3,
+      "name": "dor-medida-permite-refactor",
+      "prompt": "O módulo de pagamentos demora 3 semanas para cada mudança. Temos 47 tickets de suporte por mês relacionados a ele. 8 devs no time. O que fazemos?",
+      "expected_output": "Reconhece dor medida e legitima refactor estrutural; propõe plano incremental proporcional; não responde 'comece simples' nem pede mais evidência.",
+      "files": [],
+      "expectations": [
+        "Reconhece que a dor está medida (3 semanas/mudança, 47 tickets/mês) e que isso legitima intervenção estrutural",
+        "Não descarta o refactor nem responde apenas com 'comece simples' / 'colete mais métricas'",
+        "Propõe caminho incremental (não reescrita total)",
+        "Pede para ver o código/estrutura real antes de prescrever o desenho final, ou condiciona o plano a essa análise"
+      ]
+    },
+    {
+      "id": 4,
+      "name": "microservicos-sem-dor-medida",
+      "prompt": "Queremos separar nosso monolito em microserviços para escalar melhor e manter o código mais organizado. Somos 4 devs.",
+      "expected_output": "Questiona a ausência de dor medida; recomenda manter monolito (modular); explica custo operacional de microserviços para time de 4 sem SRE.",
+      "files": [],
+      "expectations": [
+        "Não endossa a migração para microserviços nas condições descritas",
+        "Pergunta por (ou aponta a ausência de) dor medida — métricas, SLO, incidentes",
+        "Recomenda monolito modular ou melhoria da modularidade interna como alternativa",
+        "Explicita o custo operacional de microserviços para um time de 4 sem SRE"
+      ]
+    },
+    {
+      "id": 5,
+      "name": "event-sourcing-em-crud",
+      "prompt": "Quero usar Event Sourcing no sistema de cadastro de clientes para ter mais controle sobre os dados.",
+      "expected_output": "Questiona a ausência de requisito real de auditoria; oferece audit log como alternativa; não implementa Event Sourcing.",
+      "files": [],
+      "expectations": [
+        "Não endossa Event Sourcing para o caso descrito",
+        "Investiga o que 'mais controle' significa e/ou aponta que não há requisito real de auditoria de estado histórico",
+        "Oferece alternativa mais simples (ex.: banco tradicional + tabela de audit log)",
+        "Menciona sob qual condição Event Sourcing se justificaria (requisito real de auditoria/replay)"
+      ]
+    },
+    {
+      "id": 6,
+      "name": "interface-para-testabilidade",
+      "prompt": "Vale criar IPaymentService para facilitar os testes unitários? Hoje só temos PaymentService, sem testes que mockam.",
+      "expected_output": "Resposta curta: não criar agora; interface só com teste que realmente mocka; alternativas (teste de integração, fake local).",
+      "files": [],
+      "expectations": [
+        "Recomenda não criar a interface enquanto não houver teste que realmente a mocke",
+        "Oferece alternativa concreta (teste de integração, fake local, test containers)",
+        "Menciona a condição sob a qual a interface passaria a valer a pena",
+        "Resposta enxuta no espírito pair-review — sem Context Map, ADR, ou discussão de arquitetura geral"
+      ]
+    },
+    {
+      "id": 7,
+      "name": "escolha-de-banco-one-way-door",
+      "prompt": "Qual banco de dados devo usar para meu projeto? É uma aplicação web de agendamento para clínicas, 2 devs, primeira versão em 2 meses.",
+      "expected_output": "Trata como one-way door: apresenta pelo menos 2 alternativas com trade-offs, faz recomendação clara, pede confirmação; pergunta apenas o que bloqueia.",
+      "files": [],
+      "expectations": [
+        "Apresenta pelo menos 2 alternativas com trade-offs antes de recomendar",
+        "Faz uma recomendação clara (não deixa a decisão totalmente com o usuário, nem finge que tanto faz)",
+        "Sinaliza que escolha de banco é decisão difícil de reverter (one-way door) ou equivalente",
+        "Considera as restrições dadas (2 devs, 2 meses, domínio de agendamento) na recomendação"
+      ]
+    },
+    {
+      "id": 8,
+      "name": "time-ia-navigation-paradox",
+      "prompt": "Usamos Claude Code e Cursor para escrever a maior parte do código. Como isso deve influenciar nossa arquitetura?",
+      "expected_output": "Trata custo de navegação para IA como restrição de primeira ordem: menos camadas, features autocontidas, nomes explícitos; explica o mecanismo.",
+      "files": [],
+      "expectations": [
+        "Trata o custo de navegação para agentes de IA como restrição de primeira ordem",
+        "Recomenda reduzir indireção/camadas e usar features autocontidas com nomes explícitos",
+        "Explica o mecanismo (dependências ocultas, cadeia de navegação, agente que não sente dificuldade) e não apenas cita estatísticas soltas",
+        "Não responde que o uso de IA não muda nada na arquitetura",
+        "Se citar números do Navigation Paradox ou da Faros AI, atribui à fonte correta (não atribui os números de PR/review ao DORA)"
+      ]
+    },
+    {
+      "id": 9,
+      "name": "nao-ativar-debug-algoritmo",
+      "prompt": "Por que minha função de cálculo de desconto está retornando NaN quando o desconto é maior que o preço?",
+      "expected_output": "Responde o debug diretamente, sem injetar ceticismo arquitetural, Regra dos 3 Passos, bounded contexts ou ADR.",
+      "files": [],
+      "expectations": [
+        "Responde à pergunta de debug diretamente (causa provável do NaN)",
+        "Não injeta conceitos arquiteturais (Regra dos 3 Passos, bounded context, ADR, monolito vs microserviços) na resposta",
+        "Não recomenda refatoração estrutural não solicitada"
+      ]
+    },
+    {
+      "id": 10,
+      "name": "brownfield-clean-arch-com-codigo",
+      "prompt": "Herdamos este serviço de cadastro de usuários de um consultor. Somos 2 devs, Prisma + Fastify, uns 40 req/min. Toda mudança pequena parece tocar sete arquivos. Vale simplificar? O que você removeria e o que manteria? O código está em evals/files/brownfield-users.",
+      "expected_output": "Navega o código antes de opinar; cita arquivos concretos como evidência; detecta os anti-padrões plantados (IUserRepository com uma implementação e sem mock, UserDTO/UserMapper 1:1, use cases one-liner, UserFactory trivial, UserId sem invariante); reconhece IEmailSender e Email como legítimos; ordena sugestões por custo/benefício; propõe estrutura por feature; não propõe reescrita total.",
+      "files": [
+        "evals/files/brownfield-users/README.md",
+        "evals/files/brownfield-users/src/users/domain/entities/User.ts",
+        "evals/files/brownfield-users/src/users/domain/value-objects/Email.ts",
+        "evals/files/brownfield-users/src/users/domain/value-objects/UserId.ts",
+        "evals/files/brownfield-users/src/users/domain/repositories/IUserRepository.ts",
+        "evals/files/brownfield-users/src/users/domain/factories/UserFactory.ts",
+        "evals/files/brownfield-users/src/users/application/dtos/UserDTO.ts",
+        "evals/files/brownfield-users/src/users/application/mappers/UserMapper.ts",
+        "evals/files/brownfield-users/src/users/application/use-cases/CreateUserUseCase.ts",
+        "evals/files/brownfield-users/src/users/application/use-cases/GetUserUseCase.ts",
+        "evals/files/brownfield-users/src/users/infrastructure/repositories/UserRepositoryImpl.ts",
+        "evals/files/brownfield-users/src/users/presentation/controllers/UserController.ts",
+        "evals/files/brownfield-users/src/notifications/IEmailSender.ts",
+        "evals/files/brownfield-users/src/notifications/SesEmailSender.ts",
+        "evals/files/brownfield-users/src/notifications/sendWelcomeEmail.ts",
+        "evals/files/brownfield-users/src/notifications/__tests__/FakeEmailSender.ts",
+        "evals/files/brownfield-users/src/notifications/__tests__/sendWelcomeEmail.test.ts"
+      ],
+      "expectations": [
+        "Lê os arquivos do fixture antes de opinar e cita nomes concretos de arquivo/classe como evidência de cada detecção (não opina só a partir do README)",
+        "Detecta IUserRepository + UserRepositoryImpl como interface de implementação única sem teste que a mocke, e recomenda remover a interface usando Prisma encapsulado no módulo de users",
+        "Detecta UserDTO + UserMapper como mapeamento 1:1 e recomenda remover (serializar a entidade ou o row do Prisma diretamente)",
+        "Detecta CreateUserUseCase e GetUserUseCase como use cases one-liner e recomenda inlinar no handler/rota",
+        "Detecta UserFactory como factory trivial e recomenda construtor ou função direta",
+        "Questiona UserId como Value Object sem invariante (string wrapper) e sugere usar string",
+        "NÃO recomenda remover IEmailSender: reconhece que há duas implementações reais (SesEmailSender + FakeEmailSender) e que o fake é usado por um teste que roda — a interface passa a exceção da skill",
+        "NÃO recomenda remover o Value Object Email: reconhece validação e normalização como invariante real",
+        "Ordena as sugestões por custo/benefício (quick wins primeiro) e explicita o que já funciona e não deve ser mexido",
+        "Propõe como destino uma estrutura por feature autocontida (ex.: src/users/ com poucos arquivos) em vez das pastas domain/application/infrastructure/presentation",
+        "Não propõe reescrita total; o caminho é incremental e reversível",
+        "Trata a dor relatada ('toca sete arquivos') como sentida e não medida, mas reconhece que as limpezas locais propostas são de baixo risco e não exigem métrica para justificar"
+      ]
+    }
+  ]
+}

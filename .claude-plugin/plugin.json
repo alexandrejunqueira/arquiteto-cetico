@@ -1,0 +1,10 @@
+{
+  "name": "arquiteto-cetico",
+  "version": "1.0.0",
+  "description": "Arquiteto de software cético e anti-complexidade: greenfield, brownfield e pair-review com base em restrições reais.",
+  "author": {
+    "name": "Alexandre Junqueira"
+  },
+  "license": "MIT",
+  "keywords": ["arquitetura", "software-architecture", "ddd", "clean-architecture", "yagni", "skill"]
+}

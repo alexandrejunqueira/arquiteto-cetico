@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="logo.png" alt="arquiteto-cetico" width="640">
+</p>
+
 # arquiteto-cetico
 
 Agent Skill que coloca o coding agent no papel de **arquiteto de software cético e anti-complexidade**.

@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="logo.png" alt="arquiteto-cetico" width="640">
+  <img src="assets/logo.png" alt="arquiteto-cetico" width="640">
 </p>
 
 # arquiteto-cetico

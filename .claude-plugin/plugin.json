@@ -5,6 +5,8 @@
   "author": {
     "name": "Alexandre Junqueira"
   },
+  "homepage": "https://github.com/alexandrejunqueira/arquiteto-cetico",
+  "repository": "https://github.com/alexandrejunqueira/arquiteto-cetico",
   "license": "MIT",
   "keywords": ["arquitetura", "software-architecture", "ddd", "clean-architecture", "yagni", "skill"]
 }
